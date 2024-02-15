@@ -16,8 +16,8 @@ import java.util.List;
 
 @RestController
 public class AccountController {
-    private AccountService accountService;
-    private AuditService auditService;
+    private final AccountService accountService;
+    private final AuditService auditService;
 
     public AccountController(AccountService accountService, AuditService auditService) {
         this.accountService = accountService;
