@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping(path = "/user")
 public class UserController {
     UserService userService;
 
@@ -15,13 +16,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     UserEntity findUser(@PathVariable Long id) {
         return userService.findUser(id).orElseThrow(()
                 -> new EntityNotFoundException("User with ID: " + id + " is not found"));
     }
 
-    @PostMapping(value = "/user/create")
+    @PostMapping(value = "/create")
     UserEntity createUser() {
         return userService.create();
     }

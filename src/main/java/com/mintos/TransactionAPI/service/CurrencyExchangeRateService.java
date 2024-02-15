@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mintos.TransactionAPI.exception.CurrencyPairExchangeNotSupportedException;
 import com.mintos.TransactionAPI.utils.Currency;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -19,24 +18,15 @@ public class CurrencyExchangeRateService {
 
     RestTemplate restTemplate;
 
-    @Value("${api.host}")
-    private String host;
+    UriComponentsBuilder uriComponentsBuilder;
 
-    @Value("${api.key}")
-    private String key;
-
-    public CurrencyExchangeRateService(RestTemplate restTemplate) {
+    public CurrencyExchangeRateService(RestTemplate restTemplate, UriComponentsBuilder uriComponentsBuilder) {
         this.restTemplate = restTemplate;
+        this.uriComponentsBuilder = uriComponentsBuilder;
     }
 
     public BigDecimal getRateForCurrencyPair(Currency from, Currency to) {
-        String uri = UriComponentsBuilder
-                .fromHttpUrl(host)
-                .queryParam("apikey", key)
-                .queryParam("base_currency", from.name())
-                .queryParam("currencies", to.name())
-                .build()
-                .toUriString();
+        String uri = getUriString(from, to);
 
         try {
             String json = restTemplate.getForObject(uri, String.class);
@@ -56,5 +46,13 @@ public class CurrencyExchangeRateService {
         }
 
         return (Double) dataMap.get(currency.name());
+    }
+
+    private String getUriString(Currency from, Currency to) {
+        return uriComponentsBuilder
+                .queryParam("base_currency", from.name())
+                .queryParam("currencies", to.name())
+                .build()
+                .toUriString();
     }
 }

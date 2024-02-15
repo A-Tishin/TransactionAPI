@@ -10,11 +10,13 @@ import com.mintos.TransactionAPI.service.AuditService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/account")
 public class AccountController {
     private final AccountService accountService;
     private final AuditService auditService;
@@ -24,19 +26,19 @@ public class AccountController {
         this.auditService = auditService;
     }
 
-    @PostMapping(value = "/account/create", consumes = "application/json")
-    void createAccount(@RequestBody AccountDto accountDto) {
-        accountService.create(accountDto);
+    @PostMapping(value = "/create", consumes = "application/json")
+    AccountEntity createAccount(@RequestBody AccountDto accountDto) {
+        return accountService.create(accountDto);
     }
 
-    @PatchMapping(value = "/account/transfer")
+    @PatchMapping(value = "/transfer")
     void transferFunds(@RequestParam Long senderId,
                        @RequestParam Long receiverId,
                        @RequestParam BigDecimal amount) {
         accountService.transferFunds(senderId, receiverId, amount);
     }
 
-    @GetMapping(value = "/account/transactionHistory")
+    @GetMapping(value = "/transactionHistory")
     List<AccountEntity> accountHistory(@RequestParam Long accountId,
                                        @RequestParam int pageSize,
                                        @RequestParam int page) {
@@ -46,7 +48,8 @@ public class AccountController {
     @ExceptionHandler({
             EntityNotFoundException.class,
             InsufficientFundsException.class,
-            CurrencyPairExchangeNotSupportedException.class})
+            CurrencyPairExchangeNotSupportedException.class,
+            HttpClientErrorException.class})
     public ResponseEntity<String> handleException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

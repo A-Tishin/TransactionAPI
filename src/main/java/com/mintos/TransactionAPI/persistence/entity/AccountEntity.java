@@ -8,7 +8,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Entity
 @Table(name = "ACCOUNTS")
@@ -62,19 +61,6 @@ public class AccountEntity {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AccountEntity that = (AccountEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(accountCurrency, that.accountCurrency) && Objects.equals(balance, that.balance);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, accountCurrency, balance);
     }
 
     @Override

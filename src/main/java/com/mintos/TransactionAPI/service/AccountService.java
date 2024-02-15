@@ -25,19 +25,20 @@ public class AccountService {
     private final CurrencyExchangeRateService currencyExchangeRateService;
 
     public AccountService(AccountRepository accountRepository,
-                          UserService userService, CurrencyExchangeRateService currencyExchangeRateService) {
+                          UserService userService,
+                          CurrencyExchangeRateService currencyExchangeRateService) {
         this.accountRepository = accountRepository;
         this.userService = userService;
         this.currencyExchangeRateService = currencyExchangeRateService;
     }
 
-    public void create(AccountDto dto) {
+    public AccountEntity create(AccountDto dto) {
         Optional<UserEntity> optional = dto.getUserId() != null ?
                 userService.findUser(dto.getUserId()) : Optional.empty();
 
         UserEntity user = optional.orElse(userService.create());
         AccountEntity account = convertDtoToAccountEntity(dto, user);
-        accountRepository.save(account);
+        return accountRepository.save(account);
     }
 
     public void transferFunds(Long senderId, Long receiverId, BigDecimal amount) {
