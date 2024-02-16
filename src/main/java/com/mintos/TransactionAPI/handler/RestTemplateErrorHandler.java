@@ -21,10 +21,8 @@ public class RestTemplateErrorHandler implements ResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
         if (response.getStatusCode().is5xxServerError()) {
-            //Handle SERVER_ERROR
             throw new HttpClientErrorException(response.getStatusCode());
         } else if (response.getStatusCode().is4xxClientError()) {
-            //Handle CLIENT_ERROR
             if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new CurrencyPairExchangeNotSupportedException("Currency pair conversion is not supported.");
             }

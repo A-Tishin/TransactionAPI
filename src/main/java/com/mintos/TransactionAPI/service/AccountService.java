@@ -17,7 +17,6 @@ import java.util.Optional;
 import static com.mintos.TransactionAPI.utils.ObjectUtil.convertDtoToAccountEntity;
 
 @Service
-@Transactional
 public class AccountService {
 
     private final AccountRepository accountRepository;
@@ -25,21 +24,23 @@ public class AccountService {
     private final CurrencyExchangeRateService currencyExchangeRateService;
 
     public AccountService(AccountRepository accountRepository,
-                          UserService userService, CurrencyExchangeRateService currencyExchangeRateService) {
+                          UserService userService,
+                          CurrencyExchangeRateService currencyExchangeRateService) {
         this.accountRepository = accountRepository;
         this.userService = userService;
         this.currencyExchangeRateService = currencyExchangeRateService;
     }
 
-    public void create(AccountDto dto) {
+    public AccountEntity create(AccountDto dto) {
         Optional<UserEntity> optional = dto.getUserId() != null ?
                 userService.findUser(dto.getUserId()) : Optional.empty();
 
         UserEntity user = optional.orElse(userService.create());
         AccountEntity account = convertDtoToAccountEntity(dto, user);
-        accountRepository.save(account);
+        return accountRepository.save(account);
     }
 
+    @Transactional
     public void transferFunds(Long senderId, Long receiverId, BigDecimal amount) {
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {

@@ -3,7 +3,6 @@ package com.mintos.TransactionAPI.persistence.entity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -34,19 +33,6 @@ public class UserEntity {
         }
 
         userAccounts.add(userAccount);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserEntity that = (UserEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(userAccounts, that.userAccounts);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, userAccounts);
     }
 
     @Override
