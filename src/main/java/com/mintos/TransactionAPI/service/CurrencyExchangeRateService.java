@@ -2,6 +2,7 @@ package com.mintos.TransactionAPI.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mintos.TransactionAPI.dto.DataDto;
 import com.mintos.TransactionAPI.exception.CurrencyPairExchangeNotSupportedException;
 import com.mintos.TransactionAPI.utils.Currency;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -30,22 +30,21 @@ public class CurrencyExchangeRateService {
 
         try {
             String json = restTemplate.getForObject(uri, String.class);
-            Map<String,Object> map = new ObjectMapper().readValue(json, HashMap.class);
-            Double rate = getRateForCurrency(map, to);
-            return new BigDecimal(rate).setScale(10, RoundingMode.FLOOR);
+            DataDto dto = new ObjectMapper().readValue(json, DataDto.class);
+            return getRateForCurrency(dto, to);
 
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new CurrencyPairExchangeNotSupportedException("Currency pair conversion is not supported.");
         }
     }
 
-    private Double getRateForCurrency(Map<String,Object> map, Currency currency) {
-        Map<String,Object> dataMap = (Map<String,Object>) map.get("data");
-        if (dataMap == null || dataMap.get(currency.name()) == null) {
+    private BigDecimal getRateForCurrency(DataDto dto, Currency currency) {
+        Map<String, BigDecimal> map = dto.getData();
+        if (map == null || map.get(currency.name()) == null) {
             throw new CurrencyPairExchangeNotSupportedException("Currency pair conversion is not supported.");
         }
 
-        return (Double) dataMap.get(currency.name());
+        return map.get(currency.name()).setScale(10, RoundingMode.FLOOR);
     }
 
     private String getUriString(Currency from, Currency to) {

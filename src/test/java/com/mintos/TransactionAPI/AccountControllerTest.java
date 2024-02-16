@@ -48,7 +48,7 @@ public class AccountControllerTest {
         dto.setCurrency(Currency.USD);
         dto.setBalance(BigDecimal.TEN);
 
-        mvc.perform(MockMvcRequestBuilders.post("/account/create")
+        mvc.perform(MockMvcRequestBuilders.post("/accounts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -65,7 +65,7 @@ public class AccountControllerTest {
         dto.setBalance(BigDecimal.TEN);
         dto.setUserId(1L);
 
-        mvc.perform(MockMvcRequestBuilders.post("/account/create")
+        mvc.perform(MockMvcRequestBuilders.post("/accounts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -73,7 +73,7 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.accountCurrency").value(Currency.EUR.name()));
 
-        mvc.perform(MockMvcRequestBuilders.get("/user/1")
+        mvc.perform(MockMvcRequestBuilders.get("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -89,7 +89,7 @@ public class AccountControllerTest {
         Mockito.when(restTemplate.getForObject(any(String.class), any()))
                 .thenReturn("{\"error\":{\"bad\": \"json\"}}");
 
-        mvc.perform(MockMvcRequestBuilders.patch("/account/transfer")
+        mvc.perform(MockMvcRequestBuilders.put("/accounts/transfer")
                         .param("senderId", "1")
                         .param("receiverId", "2")
                         .param("amount", "5"))
@@ -102,7 +102,7 @@ public class AccountControllerTest {
         Mockito.when(restTemplate.getForObject(any(String.class), any()))
                 .thenReturn("{\"error\":{\"reason\": \"currency is not supported\"}}");
 
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.patch("/account/transfer")
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.put("/accounts/transfer")
                         .param("senderId", "1")
                         .param("receiverId", "2")
                         .param("amount", "5"))
@@ -117,7 +117,7 @@ public class AccountControllerTest {
     public void testFundTransfer() throws Exception {
         Mockito.when(restTemplate.getForObject(any(String.class), any())).thenReturn("{\"data\":{\"EUR\": 0.50}}");
 
-        mvc.perform(MockMvcRequestBuilders.patch("/account/transfer")
+        mvc.perform(MockMvcRequestBuilders.put("/accounts/transfer")
                         .param("senderId", "1")
                         .param("receiverId", "2")
                         .param("amount", "5"))
@@ -127,8 +127,8 @@ public class AccountControllerTest {
     @Test
     @Order(6)
     public void testAccountAudit() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/account/transactionHistory")
-                        .param("accountId", "1")
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/accounts/{accountId}/transactionHistory", 1)
                         .param("pageSize", "2")
                         .param("page", "1"))
                 .andExpect(status().isOk());

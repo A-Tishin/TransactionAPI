@@ -29,7 +29,7 @@ public class UserControllerTests {
     @Test
     @Order(1)
     public void testUserCreation() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/create"))
+        mvc.perform(MockMvcRequestBuilders.post("/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1));
@@ -38,7 +38,7 @@ public class UserControllerTests {
     @Test
     @Order(2)
     public void testUserSearch() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/user/1"))
+        mvc.perform(MockMvcRequestBuilders.get("/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1));
@@ -47,7 +47,7 @@ public class UserControllerTests {
     @Test
     @Order(3)
     public void testUserSearchNotFound() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/user/10"))
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/users/10"))
                 .andExpect(status().isNotFound())
                 .andReturn();
 

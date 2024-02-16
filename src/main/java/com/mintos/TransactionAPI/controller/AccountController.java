@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/account")
+@RequestMapping(path = "/accounts")
 public class AccountController {
     private final AccountService accountService;
     private final AuditService auditService;
@@ -26,20 +26,20 @@ public class AccountController {
         this.auditService = auditService;
     }
 
-    @PostMapping(value = "/create", consumes = "application/json")
+    @PostMapping(consumes = "application/json")
     AccountEntity createAccount(@RequestBody AccountDto accountDto) {
         return accountService.create(accountDto);
     }
 
-    @PatchMapping(value = "/transfer")
+    @PutMapping(value = "/transfer")
     void transferFunds(@RequestParam Long senderId,
                        @RequestParam Long receiverId,
                        @RequestParam BigDecimal amount) {
         accountService.transferFunds(senderId, receiverId, amount);
     }
 
-    @GetMapping(value = "/transactionHistory")
-    List<AccountEntity> accountHistory(@RequestParam Long accountId,
+    @GetMapping(value = "/{accountId}/transactionHistory")
+    List<AccountEntity> accountHistory(@PathVariable Long accountId,
                                        @RequestParam int pageSize,
                                        @RequestParam int page) {
         return auditService.getAccountHistory(accountId, pageSize, page);

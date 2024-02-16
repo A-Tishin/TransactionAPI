@@ -17,7 +17,6 @@ import java.util.Optional;
 import static com.mintos.TransactionAPI.utils.ObjectUtil.convertDtoToAccountEntity;
 
 @Service
-@Transactional
 public class AccountService {
 
     private final AccountRepository accountRepository;
@@ -41,6 +40,7 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    @Transactional
     public void transferFunds(Long senderId, Long receiverId, BigDecimal amount) {
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
