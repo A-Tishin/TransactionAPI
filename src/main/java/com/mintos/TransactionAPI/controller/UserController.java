@@ -3,8 +3,6 @@ package com.mintos.TransactionAPI.controller;
 import com.mintos.TransactionAPI.exception.EntityNotFoundException;
 import com.mintos.TransactionAPI.persistence.entity.UserEntity;
 import com.mintos.TransactionAPI.service.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,10 +25,4 @@ public class UserController {
         return userService.create();
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleException(EntityNotFoundException e) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
-    }
 }

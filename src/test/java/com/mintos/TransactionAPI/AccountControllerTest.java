@@ -93,7 +93,7 @@ public class AccountControllerTest {
                         .param("senderId", "1")
                         .param("receiverId", "2")
                         .param("amount", "5"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().is(503));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class AccountControllerTest {
                         .param("senderId", "1")
                         .param("receiverId", "2")
                         .param("amount", "5"))
-                .andExpect(status().isNotFound())
+                .andExpect(status().is(503))
                 .andReturn();
 
         assertEquals(result.getResponse().getContentAsString(), "Currency pair conversion is not supported.");

@@ -1,16 +1,10 @@
 package com.mintos.TransactionAPI.controller;
 
 import com.mintos.TransactionAPI.dto.AccountDto;
-import com.mintos.TransactionAPI.exception.CurrencyPairExchangeNotSupportedException;
-import com.mintos.TransactionAPI.exception.EntityNotFoundException;
-import com.mintos.TransactionAPI.exception.InsufficientFundsException;
 import com.mintos.TransactionAPI.persistence.entity.AccountEntity;
 import com.mintos.TransactionAPI.service.AccountService;
 import com.mintos.TransactionAPI.service.AuditService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,17 +37,6 @@ public class AccountController {
                                        @RequestParam int pageSize,
                                        @RequestParam int page) {
         return auditService.getAccountHistory(accountId, pageSize, page);
-    }
-
-    @ExceptionHandler({
-            EntityNotFoundException.class,
-            InsufficientFundsException.class,
-            CurrencyPairExchangeNotSupportedException.class,
-            HttpClientErrorException.class})
-    public ResponseEntity<String> handleException(RuntimeException e) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
     }
 
 }
